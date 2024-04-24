@@ -3,6 +3,9 @@ package com.luke.peach.peach.job;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.schedulerx.worker.domain.JobContext;
+import com.alibaba.schedulerx.worker.processor.JobProcessor;
+import com.alibaba.schedulerx.worker.processor.ProcessResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luke.peach.peach.entity.CurrencyConversionDO;
 import com.luke.peach.peach.enums.CurrencyPairEnum;
@@ -12,7 +15,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -32,7 +34,7 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-public class CurrencyJob {
+public class CurrencyJob implements JobProcessor {
 
     @Autowired
     private ICurrencyConversionService iCurrencyConversionService;
@@ -40,12 +42,19 @@ public class CurrencyJob {
     /**
      * 按照标准时间来算，每隔 30分钟 执行一次
      */
-    @Scheduled(cron = "0/180 * * * * ?")
-    public void job1() throws IOException {
-        log.info("【job1】开始执行：{}", DateUtil.formatDateTime(new Date()));
-        //LocalDate now = LocalDate.now();
-        cell(0);
+//    @Scheduled(cron = "0/180 * * * * ?")
+//    public void job1() throws IOException {
+//        log.info("【job1】开始执行：{}", DateUtil.formatDateTime(new Date()));
+//        //LocalDate now = LocalDate.now();
+//        cell(0);
+//
+//    }
 
+    @Override
+    public ProcessResult process(JobContext jobContext) throws IOException {
+        log.info("【job1】开始执行：{}", DateUtil.formatDateTime(new Date()));
+        cell(0);
+        return new ProcessResult(true);
     }
 
     private void cell(Integer addDays) throws IOException {
