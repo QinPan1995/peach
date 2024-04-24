@@ -10,8 +10,11 @@ public class TestController {
 
     @Value("${spring.application.name}")
     private String applicationName;
+
+    @Value("${spring.profiles.active}")
+    private String active;
     @RequestMapping("/")
     public String sayHi() {
-        return "hello world "+applicationName;
+        return active+"环境运行"+applicationName+":hello world";
     }
 }
