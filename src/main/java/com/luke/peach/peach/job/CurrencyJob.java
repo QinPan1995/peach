@@ -58,7 +58,7 @@ public class CurrencyJob {
                 .build();
         Response response = client.newCall(request).execute();
         String string = response.body().string();
-        System.out.println(string);
+        log.info("获取三方汇率结果：{}", string);
         ObjectMapper objectMapper = new ObjectMapper();
         List<List<Object>> data = objectMapper.readValue(string, List.class);
         List<CurrencyConversionDO> currencyConversionDOS = iCurrencyConversionService.listCurrencyConversion(now);
@@ -91,7 +91,7 @@ public class CurrencyJob {
                 addList.add(currencyConversion);
             }
             iCurrencyConversionService.removeBatchByIds(removeList);
-            System.out.println(JSONObject.toJSONString(addList));
+            log.info("同步汇率到数据库：{}", JSONObject.toJSONString(addList));
             iCurrencyConversionService.saveOrUpdateBatch(addList);
             // Now 'conversions' list contains CurrencyConversion objects
             // You can use this list as needed
