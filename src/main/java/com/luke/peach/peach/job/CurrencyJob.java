@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -37,15 +38,13 @@ public class CurrencyJob {
     private ICurrencyConversionService iCurrencyConversionService;
 
     /**
-     * 按照标准时间来算，每隔 10s 执行一次
+     * 按照标准时间来算，每隔 30分钟 执行一次
      */
-    //@Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "0/180 * * * * ?")
     public void job1() throws IOException {
         log.info("【job1】开始执行：{}", DateUtil.formatDateTime(new Date()));
         //LocalDate now = LocalDate.now();
-        for (int i = 12; i > 0; i--) {
-            cell(i);
-        }
+        cell(0);
 
     }
 
