@@ -74,4 +74,13 @@ public enum CurrencyPairEnum {
         }
         return null;
     }
+
+    /**
+     * 重写toString方法以json的形式输出name和code
+     */
+    @Override
+    public String toString() {
+        return "{\"name\":\"" + this.name + "\",\"code\":\"" + this.code + "\"}";
+    }
+
 }

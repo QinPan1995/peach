@@ -1,5 +1,7 @@
 package com.luke.peach.peach.entity;
 
+import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.luke.peach.peach.enums.CurrencyPairEnum;
@@ -37,6 +39,7 @@ public class CurrencyConversionDO extends BaseEntity implements Serializable {
     /**
      * 来源货币
      */
+    @JSONField(serializeFeatures= JSONWriter.Feature.WriteEnumUsingToString)
     @TableField(value = "source_currency")
     private CurrencyPairEnum sourceCurrency;
 
@@ -49,6 +52,7 @@ public class CurrencyConversionDO extends BaseEntity implements Serializable {
     /**
      * 目标货币
      */
+    @JSONField(serializeFeatures= JSONWriter.Feature.WriteEnumUsingToString)
     @TableField(value = "target_currency")
     private CurrencyPairEnum targetCurrency;
 
