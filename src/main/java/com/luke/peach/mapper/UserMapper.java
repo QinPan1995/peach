@@ -1,13 +1,14 @@
 package com.luke.peach.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.luke.peach.entity.UserDO;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserMapper extends JpaRepository<UserDO, Long>, JpaSpecificationExecutor<UserDO> {
+@Mapper
+public interface UserMapper extends BaseMapper<UserDO> {
     /**
      * 根据用户名、邮箱、手机号查询用户
      *
@@ -16,7 +17,12 @@ public interface UserMapper extends JpaRepository<UserDO, Long>, JpaSpecificatio
      * @param phone    手机号
      * @return 用户信息
      */
-    Optional<UserDO> findByUsernameOrEmailOrPhone(String username, String email, String phone);
+    default Optional<UserDO> findByUsernameOrEmailOrPhone(String username, String email, String phone){
+        return Optional.ofNullable(selectOne(new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<UserDO>()
+                .eq(username != null, "username", username)
+                .or().eq(email != null, "email", email)
+                .or().eq(phone != null, "phone", phone)));
+    };
 
     /**
      * 根据用户名列表查询用户列表

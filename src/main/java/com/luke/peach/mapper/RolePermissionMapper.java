@@ -1,9 +1,9 @@
 package com.luke.peach.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.luke.peach.entity.RolePermissionDO;
-import com.luke.peach.entity.unionkey.RolePermissionKey;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.apache.ibatis.annotations.Mapper;
 
-public interface RolePermissionMapper extends JpaRepository<RolePermissionDO, RolePermissionKey>, JpaSpecificationExecutor<RolePermissionDO> {
+@Mapper
+public interface RolePermissionMapper extends BaseMapper<RolePermissionDO> {
 }

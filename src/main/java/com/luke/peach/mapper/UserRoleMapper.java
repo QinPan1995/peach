@@ -1,10 +1,10 @@
 package com.luke.peach.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.luke.peach.entity.UserRoleDO;
-import com.luke.peach.entity.unionkey.UserRoleKey;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.apache.ibatis.annotations.Mapper;
 
-public interface UserRoleMapper extends JpaRepository<UserRoleDO, UserRoleKey>, JpaSpecificationExecutor<UserRoleDO> {
+@Mapper
+public interface UserRoleMapper extends BaseMapper<UserRoleDO> {
 
         }
