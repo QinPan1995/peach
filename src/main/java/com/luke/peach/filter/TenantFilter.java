@@ -3,7 +3,6 @@ package com.luke.peach.filter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.access.AccessDeniedException;
 
 import java.io.IOException;
 
@@ -23,10 +22,7 @@ public class TenantFilter implements Filter {
 
         String tenantId = request.getHeader("X-Tenant-Id");
         boolean hasAccess = true;
-        if (hasAccess) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        throw new AccessDeniedException("Access denied");
+        filterChain.doFilter(request, response);
+        //throw new AccessDeniedException("Access denied");
     }
 }

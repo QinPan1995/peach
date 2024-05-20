@@ -1,6 +1,5 @@
 package com.luke.peach.filter;
 
-import ch.qos.logback.core.joran.sanity.Pair;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,25 +40,12 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         // 获取密码
         String password = jsonObject.getString("password");
 
+        username = username != null ? username.trim() : "";
+        password = password != null ? password : "";
         // 创建 UsernamePasswordAuthenticationToken 对象
-        UsernamePasswordAuthenticationToken authRequest =
-                new UsernamePasswordAuthenticationToken(username, password);
-
-        // 允许子类设置 "details" 属性
+        UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(username, password);
         setDetails(request, authRequest);
-
-        return getAuthenticationManager().authenticate(authRequest);
+        return super.getAuthenticationManager().authenticate(authRequest);
     }
 
-    @SneakyThrows
-    private Pair<String, String> obtainUsernameAndPassword(HttpServletRequest request) {
-        // 解析 JSON 数据为 JSONObject
-        JSONObject jsonObject = JSON.parseObject(request.getInputStream());
-
-        // 获取用户名和密码
-        String username = jsonObject.getString("username");
-        String password = jsonObject.getString("password");
-
-        return new Pair<>(username, password);
-    }
 }
