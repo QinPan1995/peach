@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://172.20.196.121:3306/mydatabase?characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: ymumwKotcoq(
     driver-class-name: com.mysql.cj.jdbc.Driver
   schedulerx2:
     endpoint: addr-sz-internal.edas.aliyun.com
