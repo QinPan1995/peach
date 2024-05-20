@@ -41,9 +41,9 @@ public class CurrencyJob implements JobProcessor {
     private ICurrencyConversionService iCurrencyConversionService;
 
     /**
-     * 按照标准时间来算，每隔 30分钟 执行一次
+     * 按照标准时间来算，每隔 5分钟 执行一次
      */
-    @Scheduled(cron = "0/180 * * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void job1() throws IOException {
         log.info("【job1】开始执行：{}", DateUtil.formatDateTime(new Date()));
         //LocalDate now = LocalDate.now();
