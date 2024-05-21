@@ -58,7 +58,7 @@ public class CurrencyJob implements JobProcessor {
         return new ProcessResult(true);
     }
 
-    private void cell(Integer addDays) throws IOException {
+    public void cell(Integer addDays) throws IOException {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         LocalDate now = LocalDate.now().plusDays(-addDays);
