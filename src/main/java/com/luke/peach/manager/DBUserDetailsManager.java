@@ -4,7 +4,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 
@@ -13,7 +13,7 @@ public class DBUserDetailsManager implements UserDetailsManager,UserDetailsPassw
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
         return User.builder().username("user").password("123").passwordEncoder(encoder::encode).roles("USER").build();
     }
 
