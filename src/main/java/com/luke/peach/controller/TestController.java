@@ -3,8 +3,6 @@ package com.luke.peach.controller;
 import com.luke.peach.mode.LoginRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@Controller("/api/auth")
+@RequestMapping("/api/auth")
 public class TestController {
 
     @Value("${spring.application.name}")
@@ -22,11 +20,7 @@ public class TestController {
         return "hello world "+applicationName;
     }
 
-    private final AuthenticationManager authenticationManager;
 
-    public TestController(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
