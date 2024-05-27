@@ -26,8 +26,9 @@ custom:
     ignores:
       # 需要过滤的 post 请求
       post:
-        - "/api/auth/login"
+        - "/peach/api/auth/login"
         - "/api/auth/logout"
+        - "/error"
       # 需要过滤的请求，不限方法
       pattern:
         - "/test/*"
