@@ -14,10 +14,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * 认证过滤器
- *
- * @author 阿沐 babamu@126.com
- * <a href="https://maku.net">MAKU</a>
+ * @author ：luke
+ * @date ：Created in 2024/4/26 6:15 PM
+ * @description：Token验证
+ * @modified By：
  */
 @Component
 @Slf4j

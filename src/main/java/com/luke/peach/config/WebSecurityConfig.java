@@ -1,6 +1,7 @@
 package com.luke.peach.config;
 
 import com.luke.peach.filter.AuthenticationTokenFilter;
+import com.luke.peach.manager.DBUserDetailsManager;
 import com.luke.peach.util.RequestIgnoreUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+/**
+ * @author ：luke
+ * @date ：Created in 2024/4/26 6:15 PM
+ * @description：Security配置
+ * @modified By：
+ */
 @EnableConfigurationProperties(CustomConfig.class)
 @Configuration
 @AllArgsConstructor
@@ -83,9 +91,9 @@ public class WebSecurityConfig{
         return providerManager;
     }
 
-//    @Bean
-//    public UserDetailsService userDetailsService(){
-//        return new DBUserDetailsManager();
-//    }
+    @Bean
+    public UserDetailsService userDetailsService(){
+        return new DBUserDetailsManager();
+    }
 
 }

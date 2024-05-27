@@ -1,4 +1,4 @@
-package com.luke.peach.mode;
+package com.luke.peach.request;
 
 import lombok.Data;
 
