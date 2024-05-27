@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -32,19 +31,26 @@ public class WebSecurityConfig{
 //    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.cors(AbstractHttpConfigurer::disable);
         http.anonymous(AbstractHttpConfigurer::disable);
         // 其他安全配置
         http.headers(headers -> headers.httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable));
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-                //使用基本授权，默认提供登录夜
-                http.httpBasic(Customizer.withDefaults());
-                //使用表单授权
-                http.formLogin(Customizer.withDefaults());
+        http.cors(AbstractHttpConfigurer::disable);
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.formLogin(AbstractHttpConfigurer::disable);
         http.logout(AbstractHttpConfigurer::disable);
-        //http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.httpBasic(AbstractHttpConfigurer::disable);
+        // 认证请求
+        http.authorizeHttpRequests(auth -> auth
+                // 放行忽略的请求
+                .requestMatchers("/api/auth/login").permitAll()
+                // RBAC 动态 url 认证
+                .anyRequest().authenticated()
+        );
+        // Session 管理，因为使用了JWT，所以这里不管理Session
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        // 异常处理
+        //http.exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler));
+        //http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

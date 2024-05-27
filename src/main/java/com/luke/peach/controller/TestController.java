@@ -1,5 +1,6 @@
 package com.luke.peach.controller;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.luke.peach.mode.LoginRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class TestController {
 //                UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.username(), loginRequest.password());
 //        Authentication authenticationResponse =
 //                this.authenticationManager.authenticate(authenticationRequest);
-       return ResponseEntity.ok("authenticationResponse.getName()");
+       return ResponseEntity.ok(JSONObject.toJSONString(loginRequest));
     }
 
 
