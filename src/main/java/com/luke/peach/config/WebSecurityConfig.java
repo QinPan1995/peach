@@ -32,6 +32,11 @@ public class WebSecurityConfig{
 
     @Autowired
     private RequestIgnoreUtil requestIgnoreUtil;
+
+    /**
+     * 忽略请求
+     * @return
+     */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
@@ -50,8 +55,6 @@ public class WebSecurityConfig{
 
         // 认证请求
         http.authorizeHttpRequests(auth -> auth
-                // 放行忽略的请求
-                //.requestMatchers("/api/auth/login").permitAll()
                 // RBAC 动态 url 认证
                 .anyRequest().authenticated()
         );
