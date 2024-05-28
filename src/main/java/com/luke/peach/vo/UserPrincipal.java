@@ -1,8 +1,8 @@
 package com.luke.peach.vo;
 
-import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.luke.peach.common.ConstantPool;
+import com.luke.peach.constant.ConstantPool;
 import com.luke.peach.entity.PermissionDO;
 import com.luke.peach.entity.RoleDO;
 import com.luke.peach.entity.UserDO;
@@ -99,7 +99,7 @@ public class UserPrincipal implements UserDetails {
     public static UserPrincipal create(UserDO user, List<RoleDO> roles, List<PermissionDO> permissions) {
         List<String> roleNames = roles.stream().map(RoleDO::getName).collect(Collectors.toList());
 
-        List<GrantedAuthority> authorities = permissions.stream().filter(permission -> StrUtil.isNotBlank(permission.getPermission())).map(permission -> new SimpleGrantedAuthority(permission.getPermission())).collect(Collectors.toList());
+        List<GrantedAuthority> authorities = permissions.stream().filter(permission -> StringUtils.isNotBlank(permission.getPermission())).map(permission -> new SimpleGrantedAuthority(permission.getPermission())).collect(Collectors.toList());
 
         return new UserPrincipal(user.getId(), user.getUsername(), user.getPassword(), user.getNickname(), user.getPhone(), user.getEmail(), user.getBirthday(), user.getSex(), user.getStatus(), user.getCreateTime(), user.getUpdateTime(), roleNames, authorities);
     }

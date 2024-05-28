@@ -1,13 +1,22 @@
 package com.luke.peach.filter;
 
+import cn.hutool.core.util.StrUtil;
+import com.luke.peach.exception.TokenException;
 import com.luke.peach.service.CustomUserDetailsService;
+import com.luke.peach.util.JwtUtil;
 import com.luke.peach.util.RequestIgnoreUtil;
+import com.luke.peach.util.ResponseUtil;
+import com.luke.peach.util.Status;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -27,6 +36,9 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     private RequestIgnoreUtil requestIgnoreUtil;
 
     @Override
@@ -35,33 +47,23 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        // 从请求体中获取 JSON 数据
-//        String jsonData = new String(request.getInputStream().readAllBytes());
-//        // 解析 JSON 数据为 JSONObject
-//        JSONObject jsonObject = JSON.parseObject(jsonData);
-//        if (Objects.isNull(jsonObject)){
-//            chain.doFilter(request, response);
-//            return;
-//        }
-//        // 获取用户名
-//        String username = jsonObject.getString("usernameOrEmailOrPhone");
-//        // 获取密码
-//        String password = jsonObject.getString("password");
-//        username = username != null ? username.trim() : "";
-//        password = password != null ? password : "";
-//
-//        //String token = jwtTokenProvider.resolveToken(request);
-//        if (!username.equals("")) {
-//            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-//            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//        } else {
-//            // 如果 token 为空或无效,拒绝访问
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.getWriter().write("Unauthorized");
-//            return;
-//        }
+        String jwt = jwtUtil.getJwtFromRequest(request);
+
+        if (StrUtil.isNotBlank(jwt)) {
+            try {
+                String username = jwtUtil.getUsernameFromJWT(jwt);
+
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                filterChain.doFilter(request, response);
+            } catch (TokenException e) {
+                ResponseUtil.renderJson(response, e);
+            }
+        } else {
+            ResponseUtil.renderJson(response, Status.UNAUTHORIZED, null);
+        }
     }
 }

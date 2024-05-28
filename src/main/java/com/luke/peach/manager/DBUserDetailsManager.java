@@ -1,12 +1,12 @@
 package com.luke.peach.manager;
 
-import org.springframework.security.core.userdetails.User;
+import com.luke.peach.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.stereotype.Component;
 
 /**
  * @author ：luke
@@ -14,13 +14,15 @@ import org.springframework.security.provisioning.UserDetailsManager;
  * @description：密码验证
  * @modified By：
  */
+@Component
 public class DBUserDetailsManager implements UserDetailsManager,UserDetailsPasswordService {
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        return User.builder().username("user").password("1235").passwordEncoder(encoder::encode).roles("USER").build();
+        return customUserDetailsService.loadUserByUsername(username);
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.luke.peach.vo;
 
-import com.luke.peach.common.IStatus;
-import com.luke.peach.enums.Status;
+
 import com.luke.peach.exception.BaseException;
+import com.luke.peach.util.IStatus;
+import com.luke.peach.util.Status;
 import lombok.Data;
 
 import java.io.Serializable;

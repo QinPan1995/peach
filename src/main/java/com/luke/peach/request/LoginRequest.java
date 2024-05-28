@@ -14,4 +14,9 @@ public class LoginRequest {
 
     private String usernameOrEmailOrPhone;
     private String password;
+
+    /**
+     * 记住我
+     */
+    private Boolean rememberMe = false;
 }

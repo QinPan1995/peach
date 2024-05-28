@@ -14,8 +14,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,6 +39,9 @@ public class WebSecurityConfig{
     @Autowired
     private RequestIgnoreUtil requestIgnoreUtil;
 
+    @Autowired
+    private DBUserDetailsManager dbUserDetailsManager;
+
     /**
      * 忽略请求
      * @return
@@ -52,14 +53,14 @@ public class WebSecurityConfig{
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.anonymous(AbstractHttpConfigurer::disable);
-        // 其他安全配置
-        http.headers(headers -> headers.httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable));
-        http.cors(AbstractHttpConfigurer::disable);
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.formLogin(AbstractHttpConfigurer::disable);
-        http.logout(AbstractHttpConfigurer::disable);
-        http.httpBasic(AbstractHttpConfigurer::disable);
+//        http.anonymous(AbstractHttpConfigurer::disable);
+//        // 其他安全配置
+//        http.headers(headers -> headers.httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable));
+//        http.cors(AbstractHttpConfigurer::disable);
+//        http.csrf(AbstractHttpConfigurer::disable);
+//        http.formLogin(AbstractHttpConfigurer::disable);
+//        http.logout(AbstractHttpConfigurer::disable);
+//        http.httpBasic(AbstractHttpConfigurer::disable);
 
         // 认证请求
         http.authorizeHttpRequests(auth -> auth
@@ -93,7 +94,7 @@ public class WebSecurityConfig{
 
     @Bean
     public UserDetailsService userDetailsService(){
-        return new DBUserDetailsManager();
+        return dbUserDetailsManager;
     }
 
 }

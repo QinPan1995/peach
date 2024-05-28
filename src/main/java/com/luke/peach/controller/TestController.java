@@ -1,10 +1,12 @@
 package com.luke.peach.controller;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.luke.peach.request.LoginRequest;
+import com.luke.peach.util.JwtUtil;
+import com.luke.peach.util.Status;
+import com.luke.peach.vo.ApiResponse;
+import com.luke.peach.vo.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,24 +25,28 @@ public class TestController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @Value("${spring.application.name}")
     private String applicationName;
-    @RequestMapping("/")
+    @RequestMapping("/test")
     public String sayHi() {
         return "hello world "+applicationName;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public ApiResponse login(@RequestBody LoginRequest loginRequest) {
         Authentication authentication;
         try {
              authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmailOrPhone(), loginRequest.getPassword()));
         } catch (BadCredentialsException e) {
             e.printStackTrace();
-            return ResponseEntity.ok(JSONObject.toJSONString("用户名或密码错误"));
+            return ApiResponse.of(Status.USERNAME_PASSWORD_ERROR.getCode(),e.getMessage(),e);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
-       return ResponseEntity.ok(JSONObject.toJSONString(loginRequest));
+        String jwt = jwtUtil.createJWT(authentication, loginRequest.getRememberMe());
+        return ApiResponse.ofSuccess(new JwtResponse(jwt));
     }
 
 

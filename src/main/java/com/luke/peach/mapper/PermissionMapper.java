@@ -1,11 +1,14 @@
 package com.luke.peach.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.luke.peach.entity.PermissionDO;
-
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 @Mapper
-public interface PermissionMapper extends BaseMapper<PermissionDO>{
+public interface PermissionMapper extends BaseMapper<PermissionDO> {
 
     /**
      * 根据角色列表查询权限列表

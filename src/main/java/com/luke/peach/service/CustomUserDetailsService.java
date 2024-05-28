@@ -1,12 +1,20 @@
 package com.luke.peach.service;
 
-import org.springframework.security.core.userdetails.User;
+import com.luke.peach.entity.PermissionDO;
+import com.luke.peach.entity.RoleDO;
+import com.luke.peach.entity.UserDO;
+import com.luke.peach.mapper.PermissionMapper;
+import com.luke.peach.mapper.RoleMapper;
+import com.luke.peach.mapper.UserMapper;
+import com.luke.peach.vo.UserPrincipal;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -18,10 +26,21 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
+
+    @Autowired
+    private PermissionMapper permissionMapper;
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmailOrPhone) throws UsernameNotFoundException {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        return User.builder().username("user").password("123").passwordEncoder(encoder::encode).roles("USER").build();
+        UserDO user = userMapper.findByUsernameOrEmailOrPhone(usernameOrEmailOrPhone, usernameOrEmailOrPhone, usernameOrEmailOrPhone).orElseThrow(() -> new UsernameNotFoundException("未找到用户信息 : " + usernameOrEmailOrPhone));
+        List<RoleDO> roles = roleMapper.selectByUserId(user.getId());
+        List<Long> roleIds = roles.stream().map(RoleDO::getId).collect(Collectors.toList());
+        List<PermissionDO> permissions = permissionMapper.selectByRoleIdList(roleIds);
+        return UserPrincipal.create(user, roles, permissions);
     }
 }
