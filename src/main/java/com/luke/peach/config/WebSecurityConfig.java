@@ -2,6 +2,7 @@ package com.luke.peach.config;
 
 import com.luke.peach.filter.AuthenticationTokenFilter;
 import com.luke.peach.manager.DBUserDetailsManager;
+import com.luke.peach.manager.RbacAuthorizationManager;
 import com.luke.peach.util.RequestIgnoreUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class WebSecurityConfig{
     @Autowired
     private DBUserDetailsManager dbUserDetailsManager;
 
+    @Autowired
+    private RbacAuthorizationManager rbacAuthorizationManager;
+
     /**
      * 忽略请求
      * @return
@@ -65,7 +69,8 @@ public class WebSecurityConfig{
         // 认证请求
         http.authorizeHttpRequests(auth -> auth
                 // RBAC 动态 url 认证
-                .anyRequest().authenticated()
+                .anyRequest()
+                .access(rbacAuthorizationManager)
         );
         // Session 管理，因为使用了JWT，所以这里不管理Session
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

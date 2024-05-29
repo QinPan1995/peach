@@ -5,7 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.luke.peach.config.JwtConfig;
 import com.luke.peach.constant.ConstantPool;
-import com.luke.peach.exception.TokenException;
+import com.luke.peach.exception.SecurityException;
 import com.luke.peach.vo.UserPrincipal;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -95,30 +95,30 @@ public class JwtUtil {
             // 校验redis中的JWT是否存在
             Long expire = stringRedisTemplate.getExpire(redisKey, TimeUnit.MILLISECONDS);
             if (Objects.isNull(expire) || expire <= 0) {
-                throw new TokenException(Status.TOKEN_EXPIRED);
+                throw new SecurityException(Status.TOKEN_EXPIRED);
             }
 
             // 校验redis中的JWT是否与当前的一致，不一致则代表用户已注销/用户在不同设备登录，均代表JWT已过期
             String redisToken = stringRedisTemplate.opsForValue().get(redisKey);
             if (!StringUtils.equals(jwt, redisToken)) {
-                throw new TokenException(Status.TOKEN_OUT_OF_CTRL);
+                throw new SecurityException(Status.TOKEN_OUT_OF_CTRL);
             }
             return claims;
         } catch (ExpiredJwtException e) {
             log.error("Token 已过期");
-            throw new TokenException(Status.TOKEN_EXPIRED);
+            throw new SecurityException(Status.TOKEN_EXPIRED);
         } catch (UnsupportedJwtException e) {
             log.error("不支持的 Token");
-            throw new TokenException(Status.TOKEN_PARSE_ERROR);
+            throw new SecurityException(Status.TOKEN_PARSE_ERROR);
         } catch (MalformedJwtException e) {
             log.error("Token 无效");
-            throw new TokenException(Status.TOKEN_PARSE_ERROR);
+            throw new SecurityException(Status.TOKEN_PARSE_ERROR);
         } catch (SignatureException e) {
             log.error("无效的 Token 签名");
-            throw new TokenException(Status.TOKEN_PARSE_ERROR);
+            throw new SecurityException(Status.TOKEN_PARSE_ERROR);
         } catch (IllegalArgumentException e) {
             log.error("Token 参数不存在");
-            throw new TokenException(Status.TOKEN_PARSE_ERROR);
+            throw new SecurityException(Status.TOKEN_PARSE_ERROR);
         }
     }
 

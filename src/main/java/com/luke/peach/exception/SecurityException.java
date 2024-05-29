@@ -14,20 +14,20 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class TokenException extends BaseException {
-    public TokenException(Status status) {
+public class SecurityException extends BaseException {
+    public SecurityException(Status status) {
         super(status);
     }
 
-    public TokenException(Status status, Object data) {
+    public SecurityException(Status status, Object data) {
         super(status, data);
     }
 
-    public TokenException(Integer code, String message) {
+    public SecurityException(Integer code, String message) {
         super(code, message);
     }
 
-    public TokenException(Integer code, String message, Object data) {
+    public SecurityException(Integer code, String message, Object data) {
         super(code, message, data);
     }
 }

@@ -1,7 +1,7 @@
 package com.luke.peach.filter;
 
 import cn.hutool.core.util.StrUtil;
-import com.luke.peach.exception.TokenException;
+import com.luke.peach.exception.SecurityException;
 import com.luke.peach.service.CustomUserDetailsService;
 import com.luke.peach.util.JwtUtil;
 import com.luke.peach.util.RequestIgnoreUtil;
@@ -59,7 +59,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 filterChain.doFilter(request, response);
-            } catch (TokenException e) {
+            } catch (SecurityException e) {
                 ResponseUtil.renderJson(response, e);
             }
         } else {
