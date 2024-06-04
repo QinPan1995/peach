@@ -3,7 +3,6 @@ package com.luke.peach.service;
 import com.luke.peach.entity.PermissionDO;
 import com.luke.peach.entity.RoleDO;
 import com.luke.peach.entity.UserDO;
-import com.luke.peach.mapper.PermissionMapper;
 import com.luke.peach.mapper.RoleMapper;
 import com.luke.peach.mapper.UserMapper;
 import com.luke.peach.vo.UserPrincipal;
@@ -14,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -33,14 +31,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     private RoleMapper roleMapper;
 
     @Autowired
-    private PermissionMapper permissionMapper;
+    private UserPermissionService userPermissionService;
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmailOrPhone) throws UsernameNotFoundException {
         UserDO user = userMapper.findByUsernameOrEmailOrPhone(usernameOrEmailOrPhone, usernameOrEmailOrPhone, usernameOrEmailOrPhone).orElseThrow(() -> new UsernameNotFoundException("未找到用户信息 : " + usernameOrEmailOrPhone));
         List<RoleDO> roles = roleMapper.selectByUserId(user.getId());
-        List<Long> roleIds = roles.stream().map(RoleDO::getId).collect(Collectors.toList());
-        List<PermissionDO> permissions = permissionMapper.selectByRoleIdList(roleIds);
+        List<PermissionDO> permissions = userPermissionService.selectByUserId(user.getId());
         return UserPrincipal.create(user, roles, permissions);
     }
 }

@@ -5,10 +5,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.luke.peach.constant.ConstantPool;
 import com.luke.peach.entity.PermissionDO;
-import com.luke.peach.entity.RoleDO;
 import com.luke.peach.exception.SecurityException;
-import com.luke.peach.mapper.PermissionMapper;
-import com.luke.peach.mapper.RoleMapper;
+import com.luke.peach.service.UserPermissionService;
 import com.luke.peach.util.Status;
 import com.luke.peach.vo.UserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +16,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
+import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.util.pattern.PathPattern;
 
 import java.util.List;
 import java.util.Map;
@@ -37,14 +36,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class RbacAuthorityService {
-    @Autowired
-    private RoleMapper roleDao;
-
-    @Autowired
-    private PermissionMapper permissionDao;
 
     @Autowired
     private RequestMappingHandlerMapping mapping;
+
+    @Autowired
+    private UserPermissionService userPermissionService;
 
     public boolean hasPermission(HttpServletRequest request, Authentication authentication) {
         checkRequest(request);
@@ -55,11 +52,7 @@ public class RbacAuthorityService {
         if (userInfo instanceof UserDetails) {
             UserPrincipal principal = (UserPrincipal) userInfo;
             Long userId = principal.getId();
-
-            List<RoleDO> roles = roleDao.selectByUserId(userId);
-            List<Long> roleIds = roles.stream().map(RoleDO::getId).collect(Collectors.toList());
-            List<PermissionDO> permissions = permissionDao.selectByRoleIdList(roleIds);
-
+            List<PermissionDO> permissions = userPermissionService.selectByUserId(userId);
             //获取资源，前后端分离，所以过滤页面权限，只保留按钮权限
             List<PermissionDO> btnPerms = permissions.stream()
                     // 过滤页面权限
@@ -124,11 +117,17 @@ public class RbacAuthorityService {
 
         handlerMethods.forEach((k, v) -> {
             // 获取当前 key 下的获取所有URL
-            Set<String> url = k.getPatternsCondition().getPatterns();
-            RequestMethodsRequestCondition method = k.getMethodsCondition();
-
+            PathPatternsRequestCondition patternsCondition = k.getPathPatternsCondition();
+            if (Objects.isNull(patternsCondition)) {
+                return;
+            }
+            Set<PathPattern> patterns = patternsCondition.getPatterns();
             // 为每个URL添加所有的请求方法
-            url.forEach(s -> urlMapping.putAll(s, method.getMethods().stream().map(Enum::toString).collect(Collectors.toList())));
+            patterns.forEach(pattern -> {
+                String urlPattern = pattern.getPatternString(); // 获取路径模式字符串
+                urlMapping.putAll(urlPattern, k.getMethodsCondition().getMethods().stream().map(Enum::toString).collect(Collectors.toList()));
+            });
+
         });
 
         return urlMapping;
