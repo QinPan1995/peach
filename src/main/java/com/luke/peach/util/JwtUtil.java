@@ -2,26 +2,30 @@ package com.luke.peach.util;
 
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.jwt.JWTPayload;
+import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.luke.peach.config.JwtConfig;
 import com.luke.peach.constant.ConstantPool;
+import com.luke.peach.constant.JwtClaimConstants;
+import com.luke.peach.constant.SecurityConstants;
 import com.luke.peach.exception.SecurityException;
 import com.luke.peach.vo.UserPrincipal;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -35,11 +39,31 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @Slf4j
 public class JwtUtil {
+
     @Autowired
     private JwtConfig jwtConfig;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * JWT 加解密使用的密钥
+     */
+    private static byte[] key;
+
+    /**
+     * JWT Token 的有效时间(单位:秒)
+     */
+    private static int ttl;
+    @Value("${jwt.config.ttl}")
+    public void setTtl(Integer ttl) {
+        JwtUtil.ttl = ttl;
+    }
+
+    @Value("${jwt.config.key}")
+    public void setKey(String key) {
+        JwtUtil.key = key.getBytes();
+    }
 
     /**
      * 创建JWT
@@ -77,6 +101,38 @@ public class JwtUtil {
     public String createJWT(Authentication authentication, Boolean rememberMe) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         return createJWT(rememberMe, userPrincipal.getId(), userPrincipal.getUsername(), userPrincipal.getRoles(), userPrincipal.getAuthorities());
+    }
+
+    /**
+     * 创建JWT Token
+     *
+     * @param authentication 用户认证信息
+     * @return Token 字符串
+     */
+    public static String createToken(Authentication authentication) {
+
+        UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put(JwtClaimConstants.USER_ID, userDetails.getId()); // 用户ID
+//        payload.put(JwtClaimConstants.DEPT_ID, userDetails.getDeptId()); // 部门ID
+//        payload.put(JwtClaimConstants.DATA_SCOPE, userDetails.getDataScope()); // 数据权限范围
+
+        // claims 中添加角色信息
+        Set<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+        payload.put(JwtClaimConstants.AUTHORITIES, roles);
+
+
+        Date now = new Date();
+        Date expiration = DateUtil.offsetSecond(now, ttl);
+        payload.put(JWTPayload.ISSUED_AT, now);
+        payload.put(JWTPayload.EXPIRES_AT, expiration);
+        payload.put(JWTPayload.SUBJECT, authentication.getName());
+        payload.put(JWTPayload.JWT_ID, IdUtil.simpleUUID());
+
+        return JWTUtil.createToken(payload, key);
     }
 
     /**
@@ -152,8 +208,8 @@ public class JwtUtil {
      * @return JWT
      */
     public String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.isNotBlank(bearerToken) && bearerToken.startsWith("Bearer ")) {
+        String bearerToken = request.getHeader(SecurityConstants.AUTHORIZATION);
+        if (StringUtils.isNotBlank(bearerToken) && bearerToken.startsWith(SecurityConstants.JWT_TOKEN_PREFIX)) {
             return bearerToken.substring(7);
         }
         return null;

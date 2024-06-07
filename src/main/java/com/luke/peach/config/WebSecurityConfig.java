@@ -1,6 +1,7 @@
 package com.luke.peach.config;
 
 import com.luke.peach.filter.AuthenticationTokenFilter;
+import com.luke.peach.filter.CaptchaValidationFilter;
 import com.luke.peach.manager.DBUserDetailsManager;
 import com.luke.peach.manager.RbacAuthorizationManager;
 import com.luke.peach.util.RequestIgnoreUtil;
@@ -36,6 +37,9 @@ public class WebSecurityConfig{
 
     @Autowired
     private AuthenticationTokenFilter authenticationTokenFilter;
+
+    @Autowired
+    private CaptchaValidationFilter captchaValidationFilter;
 
     @Autowired
     private RequestIgnoreUtil requestIgnoreUtil;
@@ -76,6 +80,9 @@ public class WebSecurityConfig{
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         // 异常处理
         //http.exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler));
+        // 验证码校验过滤器
+        http.addFilterBefore(captchaValidationFilter, UsernamePasswordAuthenticationFilter.class);
+        // JWT 校验过滤器
         http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

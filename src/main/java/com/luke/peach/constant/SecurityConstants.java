@@ -1,0 +1,47 @@
+package com.luke.peach.constant;
+
+/**
+ * 缓存常量
+ *
+ * @author luke
+ * @since Created in 2024/4/26 6:15 PM
+ */
+public interface SecurityConstants {
+
+    /**
+     * 验证码缓存前缀
+     */
+    String CAPTCHA_CODE_PREFIX = "captcha_code:";
+
+    /**
+     * 角色和权限缓存前缀
+     */
+    String ROLE_PERMS_PREFIX = "role_perms:";
+
+    /**
+     * 黑名单Token缓存前缀
+     */
+    String BLACKLIST_TOKEN_PREFIX = "token:blacklist:";
+
+
+    /**
+     * 登录路径
+     */
+    String LOGIN_PATH = "/api/v1/auth/login";
+
+
+    /**
+     * JWT Token 前缀
+     */
+    String JWT_TOKEN_PREFIX = "Bearer ";
+
+    /**
+     * header 中JWT Token的名称
+     */
+    String AUTHORIZATION = "Authorization";
+    /**
+     * 超级管理员角色编码
+     */
+    String ROOT_ROLE_CODE = "ROOT";
+
+}
