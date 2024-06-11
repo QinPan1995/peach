@@ -1,64 +1,47 @@
 package com.luke.peach.controller;
 
-import com.luke.peach.enums.Status;
-import com.luke.peach.exception.SecurityException;
-import com.luke.peach.request.LoginRequest;
-import com.luke.peach.util.JwtUtil;
-import com.luke.peach.vo.ApiResponse;
-import com.luke.peach.vo.JwtResponse;
-import jakarta.servlet.http.HttpServletRequest;
+import com.luke.peach.common.result.CaptchaResult;
+import com.luke.peach.common.result.LoginResult;
+import com.luke.peach.common.result.Result;
+import com.luke.peach.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
-/**
- * @author ：luke
- * @date ：Created in 2024/4/26 11:15 AM
- * @description：认证 Controller，包括用户注册，用户登录请求
- * @modified By：
- */
-
-@Slf4j
+@Tag(name = "01.认证中心")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthService authService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    /**
-     * 登录
-     */
+    @Operation(summary = "登录")
     @PostMapping("/login")
-    public ApiResponse login(@Valid @RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmailOrPhone(), loginRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = jwtUtil.createJWT(authentication, loginRequest.getRememberMe());
-        return ApiResponse.ofSuccess(new JwtResponse(jwt));
+    public Result<LoginResult> login(
+            @Parameter(description = "用户名", example = "admin") @RequestParam String username,
+            @Parameter(description = "密码", example = "123456") @RequestParam String password
+    ) {
+        LoginResult loginResult = authService.login(username, password);
+        return Result.success(loginResult);
     }
 
-    @PostMapping("/logout")
-    public ApiResponse logout(HttpServletRequest request) {
-        try {
-            // 设置JWT过期
-            jwtUtil.invalidateJWT(request);
-        } catch (SecurityException e) {
-            throw new SecurityException(Status.UNAUTHORIZED);
-        }
-        return ApiResponse.ofStatus(Status.LOGOUT);
+    @Operation(summary = "注销")
+    @DeleteMapping("/logout")
+    public Result logout() {
+        authService.logout();
+        return Result.success();
     }
+
+    @Operation(summary = "获取验证码")
+    @GetMapping("/captcha")
+    public Result<CaptchaResult> getCaptcha() {
+        CaptchaResult captcha = authService.getCaptcha();
+        return Result.success(captcha);
+    }
+
 }
