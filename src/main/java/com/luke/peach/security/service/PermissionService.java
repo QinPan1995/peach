@@ -18,7 +18,7 @@ import java.util.*;
  * @author luke
  * @since 2024/6/11
  */
-@Component
+@Component("permissionService")
 @RequiredArgsConstructor
 @Slf4j
 public class PermissionService {

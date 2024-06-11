@@ -7,8 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 /**
  * 用户角色访问层
  *
- * @author haoxr
- * @since 2022/1/15
+ * @author luke
+ * @since 2024/6/11
  */
 @Mapper
 public interface SysUserRoleMapper extends BaseMapper<SysUserRole> {

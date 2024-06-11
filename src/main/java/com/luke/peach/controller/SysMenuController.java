@@ -66,7 +66,7 @@ public class SysMenuController {
 
     @Operation(summary = "新增菜单")
     @PostMapping
-    @PreAuthorize("@ss.hasPerm('sys:menu:add')")
+    @PreAuthorize("@permissionService.hasPerm('sys:menu:add')")
     @PreventDuplicateSubmit
     public Result addMenu(@RequestBody MenuForm menuForm) {
         boolean result = menuService.saveMenu(menuForm);
@@ -75,7 +75,7 @@ public class SysMenuController {
 
     @Operation(summary = "修改菜单")
     @PutMapping(value = "/{id}")
-    @PreAuthorize("@ss.hasPerm('sys:menu:edit')")
+    @PreAuthorize("@permissionService.hasPerm('sys:menu:edit')")
     public Result updateMenu(
             @RequestBody MenuForm menuForm
     ) {
@@ -85,7 +85,7 @@ public class SysMenuController {
 
     @Operation(summary = "删除菜单")
     @DeleteMapping("/{id}")
-    @PreAuthorize("@ss.hasPerm('sys:menu:delete')")
+    @PreAuthorize("@permissionService.hasPerm('sys:menu:delete')")
     public Result deleteMenu(
             @Parameter(description ="菜单ID，多个以英文(,)分割") @PathVariable("id") Long id
     ) {

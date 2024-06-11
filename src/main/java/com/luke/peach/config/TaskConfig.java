@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * 定时任务配置，配置线程池，使用不同线程执行任务，提升效率
  * </p>
  *
- * @author yangkai.shen
- * @date Created in 2018-11-22 19:02
+ * @author luke
+ * @since 2024/6/11
  */
 @Configuration
 @EnableScheduling

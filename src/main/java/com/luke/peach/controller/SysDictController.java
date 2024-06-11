@@ -53,7 +53,7 @@ public class SysDictController {
 
     @Operation(summary = "新增字典")
     @PostMapping
-    @PreAuthorize("@ss.hasPerm('sys:dict:add')")
+    @PreAuthorize("@permissionService.hasPerm('sys:dict:add')")
     @PreventDuplicateSubmit
     public Result saveDict(
             @RequestBody DictForm DictForm
@@ -64,7 +64,7 @@ public class SysDictController {
 
     @Operation(summary = "修改字典")
     @PutMapping("/{id}")
-    @PreAuthorize("@ss.hasPerm('sys:dict:edit')")
+    @PreAuthorize("@permissionService.hasPerm('sys:dict:edit')")
     public Result updateDict(
             @PathVariable Long id,
             @RequestBody DictForm DictForm
@@ -75,7 +75,7 @@ public class SysDictController {
 
     @Operation(summary = "删除字典")
     @DeleteMapping("/{ids}")
-    @PreAuthorize("@ss.hasPerm('sys:dict:delete')")
+    @PreAuthorize("@permissionService.hasPerm('sys:dict:delete')")
     public Result deleteDict(
             @Parameter(description ="字典ID，多个以英文逗号(,)拼接") @PathVariable String ids
     ) {
@@ -115,7 +115,7 @@ public class SysDictController {
 
     @Operation(summary = "新增字典类型")
     @PostMapping("/types")
-    @PreAuthorize("@ss.hasPerm('sys:dict_type:add')")
+    @PreAuthorize("@permissionService.hasPerm('sys:dict_type:add')")
     @PreventDuplicateSubmit
     public Result saveDictType(@RequestBody DictTypeForm dictTypeForm) {
         boolean result = dictTypeService.saveDictType(dictTypeForm);
@@ -124,7 +124,7 @@ public class SysDictController {
 
     @Operation(summary = "修改字典类型")
     @PutMapping("/types/{id}")
-    @PreAuthorize("@ss.hasPerm('sys:dict_type:edit')")
+    @PreAuthorize("@permissionService.hasPerm('sys:dict_type:edit')")
     public Result updateDictType(@PathVariable Long id, @RequestBody DictTypeForm dictTypeForm) {
         boolean status = dictTypeService.updateDictType(id, dictTypeForm);
         return Result.judge(status);
@@ -132,7 +132,7 @@ public class SysDictController {
 
     @Operation(summary = "删除字典类型")
     @DeleteMapping("/types/{ids}")
-    @PreAuthorize("@ss.hasPerm('sys:dict_type:delete')")
+    @PreAuthorize("@permissionService.hasPerm('sys:dict_type:delete')")
     public Result deleteDictTypes(
             @Parameter(description ="字典类型ID，多个以英文逗号(,)分割") @PathVariable String ids
     ) {

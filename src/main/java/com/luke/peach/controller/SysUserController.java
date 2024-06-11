@@ -47,7 +47,7 @@ public class SysUserController {
 
     @Operation(summary = "新增用户")
     @PostMapping
-    @PreAuthorize("@ss.hasPerm('sys:user:add')")
+    @PreAuthorize("@permissionService.hasPerm('sys:user:add')")
     @PreventDuplicateSubmit
     public Result saveUser(
             @RequestBody @Valid UserForm userForm
@@ -67,7 +67,7 @@ public class SysUserController {
 
     @Operation(summary = "修改用户")
     @PutMapping(value = "/{userId}")
-    @PreAuthorize("@ss.hasPerm('sys:user:edit')")
+    @PreAuthorize("@permissionService.hasPerm('sys:user:edit')")
     public Result updateUser(
             @Parameter(description = "用户ID") @PathVariable Long userId,
             @RequestBody @Validated UserForm userForm) {
@@ -77,7 +77,7 @@ public class SysUserController {
 
     @Operation(summary = "删除用户")
     @DeleteMapping("/{ids}")
-    @PreAuthorize("@ss.hasPerm('sys:user:delete')")
+    @PreAuthorize("@permissionService.hasPerm('sys:user:delete')")
     public Result deleteUsers(
             @Parameter(description = "用户ID，多个以英文逗号(,)分割") @PathVariable String ids
     ) {
@@ -87,7 +87,7 @@ public class SysUserController {
 
     @Operation(summary = "修改用户密码")
     @PatchMapping(value = "/{userId}/password")
-    @PreAuthorize("@ss.hasPerm('sys:user:password:reset')")
+    @PreAuthorize("@permissionService.hasPerm('sys:user:password:reset')")
     public Result updatePassword(
             @Parameter(description = "用户ID") @PathVariable Long userId,
             @RequestParam String password

@@ -13,8 +13,8 @@ import java.io.IOException;
 /**
  * Spring Security访问异常处理器
  *
- * @author haoxr
- * @since 2022/10/18
+ * @author luke
+ * @since 2024/6/11
  */
 @Component
 public class MyAccessDeniedHandler implements AccessDeniedHandler {
