@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://120.76.206.153:3306/youlai_boot?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true&allowMultiQueries=true
+    url: jdbc:mysql://120.76.206.153:3306/mydatabase?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true&allowMultiQueries=true
     username: admin
     password: ymumwKotcoq(
     driver-class-name: com.mysql.cj.jdbc.Driver
