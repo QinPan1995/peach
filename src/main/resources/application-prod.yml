@@ -59,10 +59,6 @@ springdoc:
     tags-sorter: alpha
   api-docs:
     path: /v3/api-docs
-  group-configs:
-    - group: 'default'
-      paths-to-match: '/**'
-      packages-to-scan: com.youlai.system.controller
   default-flat-param-object: true
 
 # knife4j 接口文档配置
