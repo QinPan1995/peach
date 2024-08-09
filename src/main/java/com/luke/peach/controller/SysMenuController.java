@@ -1,5 +1,6 @@
 package com.luke.peach.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.luke.peach.common.model.Option;
 import com.luke.peach.common.result.Result;
 import com.luke.peach.model.form.MenuForm;
@@ -37,7 +38,9 @@ public class SysMenuController {
     @Operation(summary = "菜单列表")
     @GetMapping
     public Result<List<MenuVO>> listMenus(@ParameterObject MenuQuery queryParams) {
+        log.info("菜单列表获取");
         List<MenuVO> menuList = menuService.listMenus(queryParams);
+        log.info("菜单列表获取：{}", JSONUtil.toJsonStr(menuList));
         return Result.success(menuList);
     }
 
